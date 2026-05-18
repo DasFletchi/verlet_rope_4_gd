@@ -43,7 +43,6 @@ class RopeRaycastCollisionData:
 	var normal: Vector3
 	
 	func _init(position: Vector3, normal: Vector3) -> void:
-		print("pos")
 		self.position = position
 		self.normal = normal
 
@@ -437,13 +436,13 @@ func get_rope_collisions() -> RopeCollisionInfo:
 	)
 
 	var is_static_collision := false
-	if RopeCollisionType in [RopeCollisionType.ALL, RopeCollisionType.STATIC_ONLY]:
+	if rope_collision_type in [RopeCollisionType.ALL, RopeCollisionType.STATIC_ONLY]:
 		_collision_shape_parameters.collision_mask = static_collision_mask
 		is_static_collision = _space_state.collide_shape(_collision_shape_parameters, 1).size() > 0
 
 	var dynamic_collisions: Array[Vector3] = []
 
-	if RopeCollisionType in [RopeCollisionType.ALL, RopeCollisionType.DYNAMIC_ONLY]:
+	if rope_collision_type in [RopeCollisionType.ALL, RopeCollisionType.DYNAMIC_ONLY]:
 		_collision_shape_parameters.collision_mask = dynamic_collision_mask
 		var results = _space_state.intersect_shape(_collision_shape_parameters, max_dynamic_collisions)
 		for hit in results:
@@ -457,7 +456,7 @@ func get_rope_collisions() -> RopeCollisionInfo:
 
 func collide_rope(dynamic_collisions: Array) -> void:
 	var general_collision_mask := static_collision_mask
-	match RopeCollisionType:
+	match rope_collision_type:
 		RopeCollisionType.ALL:
 			general_collision_mask = static_collision_mask | dynamic_collision_mask
 		RopeCollisionType.DYNAMIC_ONLY:
@@ -492,13 +491,11 @@ func collide_rope(dynamic_collisions: Array) -> void:
 
 		var general_to = particle_move + particle_move.normalized() * COLLISION_CHECK_LENGTH
 		var general_data = collide_raycast(current_point.position_previous, general_to, general_collision_mask)
-		if general_data == null:
-			continue
+		if general_data != null:
+			current_point.position_current = general_data.position + general_data.normal * COLLISION_CHECK_LENGTH
 
-		current_point.position_current = general_data.position + general_data.normal * COLLISION_CHECK_LENGTH
-
-		if is_rope_stretched:
-			current_point.position_current += particle_move.slide(general_data.normal)
+			if is_rope_stretched:
+				current_point.position_current += particle_move.slide(general_data.normal)
 
 		_particle_data.particles[i] = current_point
 
@@ -601,6 +598,7 @@ func apply_forces() -> void:
 			total_acceleration += drag
 
 		p.acceleration = total_acceleration
+		_particle_data.particles[i] = p
 
 func apply_constraints() -> void:
 	stiff_rope()
