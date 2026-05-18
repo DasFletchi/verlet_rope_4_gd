@@ -13,7 +13,7 @@ https://github.com/Tshmofen/verlet-rope-4
 
 - 🧵 Direct translation of the original C# implementation to GDScript
 - 🔗 Special feature: Ability to attach objects to the end of the rope with position and rotation support
-- 🧱 Optional ***EXPERIMENTAL***`VerletRopeRigidbody` node variant for stronger dynamic rigidbody interaction out of the box
+- 🧱 Optional ***EXPERIMENTAL***`VerletRopeRigidbody` node variant for stronger dynamic rigidbody interaction out of the box 
 
 > 🚨 **Note:** The object attachment feature supports both position and rotation control. You can toggle whether attached objects should follow the rope's orientation using the `rotate_attached_object` property. These features are being developed based on the needs of specific projects, so they may or may not be useful for your particular use case. Regardless, the core functionality of the original project has been successfully ported to GDScript.
 >
